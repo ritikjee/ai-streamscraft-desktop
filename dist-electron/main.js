@@ -16,11 +16,11 @@ function createWindow() {
     height: 600,
     minWidth: 300,
     minHeight: 600,
-    frame: false,
-    hasShadow: false,
-    transparent: true,
-    alwaysOnTop: true,
-    focusable: false,
+    // frame: false,
+    // hasShadow: false,
+    // transparent: true,
+    // alwaysOnTop: true,
+    // focusable: false,
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
@@ -36,11 +36,11 @@ function createWindow() {
     maxHeight: 400,
     minWidth: 300,
     maxWidth: 400,
-    frame: false,
-    hasShadow: false,
-    transparent: true,
-    alwaysOnTop: true,
-    focusable: false,
+    // frame: false,
+    // hasShadow: false,
+    // transparent: true,
+    // alwaysOnTop: true,
+    // focusable: false,
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
@@ -56,11 +56,11 @@ function createWindow() {
     maxWidth: 400,
     minHeight: 70,
     maxHeight: 400,
-    frame: false,
-    hasShadow: false,
-    transparent: true,
-    alwaysOnTop: true,
-    focusable: false,
+    // frame: false,
+    // hasShadow: false,
+    // transparent: true,
+    // alwaysOnTop: true,
+    // focusable: false,
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
@@ -86,14 +86,16 @@ function createWindow() {
       (/* @__PURE__ */ new Date()).toLocaleString()
     );
   });
+  floatingWebCam.webContents.on("did-finish-load", () => {
+    floatingWebCam == null ? void 0 : floatingWebCam.webContents.send(
+      "main-process-message",
+      (/* @__PURE__ */ new Date()).toLocaleString()
+    );
+  });
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
-    studio.loadURL(`${"http://localhost:5173"}/studio.html`);
-    floatingWebCam.loadURL(`${"http://localhost:5173"}/webcam.html`);
   } else {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
-    studio.loadFile(path.join(RENDERER_DIST, "index.html"));
-    floatingWebCam.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
 app.on("window-all-closed", () => {
@@ -113,11 +115,13 @@ ipcMain.on("closeApp", () => {
   }
 });
 ipcMain.handle("getSources", async () => {
-  return await desktopCapturer.getSources({
+  const data = await desktopCapturer.getSources({
     thumbnailSize: { height: 100, width: 150 },
     fetchWindowIcons: true,
     types: ["window", "screen"]
   });
+  console.log(data);
+  return data;
 });
 ipcMain.on("media-sources", (event, payload) => {
   console.log(event);

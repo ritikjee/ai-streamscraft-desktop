@@ -31,7 +31,7 @@ export const useStudioSettings = (
       preset: "HD" | "SD";
     }) => updateStudioSettings(data.id, data.screen, data.audio, data.preset),
     onSuccess: (data) => {
-      return toast(data.success ? "Success" : "Error", {
+      return toast(data.status === 200 ? "Success" : "Error", {
         description: data.message,
       });
     },

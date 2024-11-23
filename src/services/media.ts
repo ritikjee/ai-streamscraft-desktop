@@ -1,18 +1,25 @@
 import httpClient from "@/lib/api";
 
 export const getMediaSources = async () => {
-  const displays = await window.ipcRenderer.invoke("getSources");
+  try {
+    const displays = await window.ipcRenderer.invoke("getSources");
+    console.log("displays", displays);
 
-  const enumerateDevices =
-    await window.navigator.mediaDevices.enumerateDevices();
+    const enumerateDevices =
+      await window.navigator.mediaDevices.enumerateDevices();
 
-  const audioIputs = enumerateDevices.filter(
-    (device) => device.kind === "audioinput"
-  );
+    console.log("enumerateDevices", enumerateDevices);
+    const audioIputs = enumerateDevices.filter(
+      (device) => device.kind === "audioinput"
+    );
 
-  console.log("getting sources");
+    console.log("getting sources");
 
-  return { displays, audio: audioIputs };
+    return { displays, audio: audioIputs };
+  } catch (error) {
+    console.error(error);
+    return { displays: [], audio: [] };
+  }
 };
 
 export const updateStudioSettings = async (
